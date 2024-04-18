@@ -8,6 +8,7 @@
 
 package org.elasticsearch.bootstrap;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.Constants;
@@ -105,7 +106,7 @@ final class Spawner implements Closeable {
         Thread t = new Thread(() -> {
             try (var br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                 String line;
-                while ((line = br.readLine()) != null) {
+                while ((line = BoundedLineReader.readLine(br, 5_000_000)) != null) {
                     // since we do not expect native controllers to ever write to stdout/stderr, we always log at warn level
                     logger.warn(line);
                 }

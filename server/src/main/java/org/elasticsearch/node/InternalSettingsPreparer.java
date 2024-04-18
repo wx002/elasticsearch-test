@@ -8,6 +8,7 @@
 
 package org.elasticsearch.node;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.settings.SettingsException;
@@ -92,7 +93,7 @@ public class InternalSettingsPreparer {
             StringBuilder builder = new StringBuilder((int) existingSize);
             try (BufferedReader reader = Files.newBufferedReader(configFile, StandardCharsets.UTF_8)) {
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                     int dollarNdx;
                     int nextNdx = 0;
                     while ((dollarNdx = line.indexOf("${", nextNdx)) != -1) {
