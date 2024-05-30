@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.idp.saml.idp;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.ElasticsearchSecurityException;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.ValidationException;
@@ -293,7 +295,7 @@ public class SamlIdentityProviderBuilder {
 
     private static URL parseUrl(String key, String value) {
         try {
-            return new URL(value);
+            return Urls.create(value, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Invalid value [" + value + "] for [" + key + "]. Not a valid URL", e);
         }

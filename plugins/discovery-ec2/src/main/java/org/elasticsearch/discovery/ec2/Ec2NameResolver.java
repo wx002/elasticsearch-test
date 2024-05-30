@@ -9,6 +9,8 @@
 package org.elasticsearch.discovery.ec2;
 
 import com.amazonaws.util.EC2MetadataUtils;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.elasticsearch.common.network.NetworkService.CustomNameResolver;
 import org.elasticsearch.core.IOUtils;
@@ -85,7 +87,7 @@ class Ec2NameResolver implements CustomNameResolver {
         String metadataUrl = EC2MetadataUtils.getHostAddressForEC2MetadataService() + "/latest/meta-data/" + type.ec2Name;
         String metadataTokenUrl = EC2MetadataUtils.getHostAddressForEC2MetadataService() + "/latest/api/token";
         try {
-            URL url = new URL(metadataUrl);
+            URL url = Urls.create(metadataUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             logger.debug("obtaining ec2 hostname from ec2 meta-data url {}", url);
             URLConnection urlConnection = SocketAccess.doPrivilegedIOException(url::openConnection);
             urlConnection.setConnectTimeout(2000);

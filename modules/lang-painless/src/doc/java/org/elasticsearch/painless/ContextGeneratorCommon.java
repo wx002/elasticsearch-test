@@ -8,6 +8,8 @@
 
 package org.elasticsearch.painless;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.core.SuppressForbidden;
 import org.elasticsearch.painless.action.PainlessContextClassBindingInfo;
 import org.elasticsearch.painless.action.PainlessContextClassInfo;
@@ -36,7 +38,7 @@ public class ContextGeneratorCommon {
     @SuppressForbidden(reason = "retrieving data from an internal API not exposed as part of the REST client")
     @SuppressWarnings("unchecked")
     public static List<PainlessContextInfo> getContextInfos() throws IOException {
-        URLConnection getContextNames = new URL("http://" + System.getProperty("cluster.uri") + "/_scripts/painless/_context")
+        URLConnection getContextNames = Urls.create("http://" + System.getProperty("cluster.uri") + "/_scripts/painless/_context", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
             .openConnection();
         List<String> contextNames;
         try (
@@ -54,9 +56,7 @@ public class ContextGeneratorCommon {
         List<PainlessContextInfo> contextInfos = new ArrayList<>();
 
         for (String contextName : contextNames) {
-            URLConnection getContextInfo = new URL(
-                "http://" + System.getProperty("cluster.uri") + "/_scripts/painless/_context?context=" + contextName
-            ).openConnection();
+            URLConnection getContextInfo = Urls.create("http://" + System.getProperty("cluster.uri") + "/_scripts/painless/_context?context=" + contextName, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
             try (var parser = JsonXContent.jsonXContent.createParser(XContentParserConfiguration.EMPTY, getContextInfo.getInputStream())) {
                 contextInfos.add(PainlessContextInfo.fromXContent(parser));
                 ((HttpURLConnection) getContextInfo).disconnect();

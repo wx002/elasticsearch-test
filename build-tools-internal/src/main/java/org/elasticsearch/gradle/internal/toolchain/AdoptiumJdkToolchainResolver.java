@@ -10,6 +10,8 @@ package org.elasticsearch.gradle.internal.toolchain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.apache.commons.compress.utils.Lists;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
@@ -58,8 +60,7 @@ public abstract class AdoptiumJdkToolchainResolver extends AbstractCustomJavaToo
         ObjectMapper mapper = new ObjectMapper();
         try {
             int languageVersion = requestKey.languageVersion.asInt();
-            URL source = new URL(
-                "https://api.adoptium.net/v3/info/release_versions?architecture="
+            URL source = Urls.create("https://api.adoptium.net/v3/info/release_versions?architecture="
                     + requestKey.arch
                     + "&image_type=jdk&os="
                     + requestKey.platform
@@ -68,8 +69,7 @@ public abstract class AdoptiumJdkToolchainResolver extends AbstractCustomJavaToo
                     + languageVersion
                     + ","
                     + (languageVersion + 1)
-                    + ")"
-            );
+                    + ")", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             JsonNode jsonNode = mapper.readTree(source);
             JsonNode versionsNode = jsonNode.get("versions");
             return Optional.of(

@@ -6,6 +6,8 @@
  */
 package org.elasticsearch.xpack.core.security;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.common.CheckedSupplier;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.hash.MessageDigests;
@@ -266,7 +268,7 @@ public class CommandLineHttpClient {
      * If status is 'Red', we will wait for 'Yellow' for 30s (default timeout)
      */
     public void checkClusterHealthWithRetriesWaitingForCluster(String username, SecureString password, int retries) throws Exception {
-        final URL clusterHealthUrl = createURL(new URL(getDefaultURL()), "_cluster/health", "?wait_for_status=yellow&pretty");
+        final URL clusterHealthUrl = createURL(Urls.create(getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), "_cluster/health", "?wait_for_status=yellow&pretty");
         HttpResponse response;
         try {
             response = execute("GET", clusterHealthUrl, username, password, () -> null, CommandLineHttpClient::responseBuilder);
@@ -318,7 +320,7 @@ public class CommandLineHttpClient {
     }
 
     public static URL createURL(URL url, String path, String query) throws MalformedURLException, URISyntaxException {
-        return new URL(url, (url.toURI().getPath() + path).replaceAll("/+", "/") + query);
+        return Urls.create(url, (url.toURI().getPath() + path).replaceAll("/+", "/") + query, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
 
     public static String apiKeyHeaderValue(SecureString apiKey) {
