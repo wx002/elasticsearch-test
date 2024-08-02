@@ -20,6 +20,7 @@ import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.StorageRetryStrategy;
+import io.github.pixee.security.BoundedLineReader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -252,7 +253,7 @@ public class GoogleCloudStorageService {
         try (InputStream input = connection.getInputStream()) {
             if (connection.getResponseCode() == 200) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8))) {
-                    return reader.readLine();
+                    return BoundedLineReader.readLine(reader, 5_000_000);
                 }
             }
         }

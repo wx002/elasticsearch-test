@@ -8,6 +8,7 @@
 
 package org.elasticsearch.server.cli;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.bootstrap.BootstrapInfo;
 
 import java.io.BufferedReader;
@@ -76,7 +77,7 @@ class ErrorPumpThread extends Thread {
     public void run() {
         try {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 if (line.isEmpty() == false && line.charAt(0) == SERVER_READY_MARKER) {
                     ready = true;
                     readyOrDead.countDown();
