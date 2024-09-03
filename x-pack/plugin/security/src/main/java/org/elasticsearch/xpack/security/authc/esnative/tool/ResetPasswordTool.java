@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.security.authc.esnative.tool;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
@@ -90,7 +92,7 @@ class ResetPasswordTool extends BaseRunAsSuperuserCommand {
         }
         try {
             final CommandLineHttpClient client = clientFunction.apply(env);
-            final URL baseUrl = options.has(urlOption) ? new URL(options.valueOf(urlOption)) : new URL(client.getDefaultURL());
+            final URL baseUrl = options.has(urlOption) ? Urls.create(options.valueOf(urlOption), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS) : Urls.create(client.getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             final URL changePasswordUrl = createURL(baseUrl, "_security/user/" + providedUsername + "/_password", "?pretty");
             final HttpResponse httpResponse = client.execute(
                 "POST",

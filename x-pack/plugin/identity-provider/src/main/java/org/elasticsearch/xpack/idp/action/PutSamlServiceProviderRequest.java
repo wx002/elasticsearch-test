@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.idp.action;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.ElasticsearchParseException;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionRequestValidationException;
@@ -100,7 +102,7 @@ public class PutSamlServiceProviderRequest extends ActionRequest {
 
         if (Strings.hasText(document.acs)) { // if this is blank the document validation will fail
             try {
-                final URL url = new URL(document.acs);
+                final URL url = Urls.create(document.acs, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
                 if (url.getProtocol().equals("https") == false) {
                     validationException = addValidationError(
                         "[" + SamlServiceProviderDocument.Fields.ACS + "] must use the [https] protocol",

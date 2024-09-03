@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.security.tool;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
@@ -207,7 +209,7 @@ public abstract class BaseRunAsSuperuserCommand extends KeyStoreAwareCommand {
         boolean force
     ) throws Exception {
         CommandLineHttpClient client = clientFunction.apply(env);
-        final URL baseUrl = options.has(urlOption) ? new URL(options.valueOf(urlOption)) : new URL(client.getDefaultURL());
+        final URL baseUrl = options.has(urlOption) ? Urls.create(options.valueOf(urlOption), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS) : Urls.create(client.getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         final URL clusterHealthUrl = CommandLineHttpClient.createURL(baseUrl, "_cluster/health", "?pretty");
         final HttpResponse response;
         try {

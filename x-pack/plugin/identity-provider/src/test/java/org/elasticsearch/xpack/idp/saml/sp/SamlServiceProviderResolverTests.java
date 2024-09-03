@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.idp.saml.sp;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.support.PlainActionFuture;
 import org.elasticsearch.common.settings.Settings;
@@ -51,7 +53,7 @@ public class SamlServiceProviderResolverTests extends ESTestCase {
     public void testResolveWithoutCache() throws Exception {
 
         final String entityId = "https://" + randomAlphaOfLength(12) + ".elastic-cloud.com/";
-        final URL acs = new URL(entityId + "saml/acs");
+        final URL acs = Urls.create(entityId + "saml/acs", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
         final String principalAttribute = randomAlphaOfLengthBetween(6, 36);
         final String rolesAttribute = randomAlphaOfLengthBetween(6, 36);

@@ -6,6 +6,8 @@
  */
 package org.elasticsearch.xpack.security.authc.esnative.tool;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -304,7 +306,7 @@ class SetupPasswordTool extends MultiCommand {
             client = clientFunction.apply(newEnv);
 
             String providedUrl = urlOption.value(options);
-            url = new URL(providedUrl == null ? client.getDefaultURL() : providedUrl);
+            url = Urls.create(providedUrl == null ? client.getDefaultURL() : providedUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             setShouldPrompt(options);
         }
 
@@ -634,7 +636,7 @@ class SetupPasswordTool extends MultiCommand {
         }
 
         private static URL createURL(URL url, String path, String query) throws MalformedURLException, URISyntaxException {
-            return new URL(url, (url.toURI().getPath() + path).replaceAll("/+", "/") + query);
+            return Urls.create(url, (url.toURI().getPath() + path).replaceAll("/+", "/") + query, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         }
     }
 

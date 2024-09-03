@@ -8,6 +8,8 @@
 
 package org.elasticsearch.common.blobstore.url.http;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.common.blobstore.BlobPath;
 import org.elasticsearch.common.blobstore.OperationPurpose;
 import org.elasticsearch.common.blobstore.url.URLBlobContainer;
@@ -58,7 +60,7 @@ public class HttpURLBlobContainer extends URLBlobContainer {
 
     private URI getURIForBlob(String name) throws IOException {
         try {
-            return new URL(path, name).toURI();
+            return Urls.create(path, name, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).toURI();
         } catch (Exception e) {
             throw new IOException("Unable to get an URI for blob with name [" + name + "]", e);
         }

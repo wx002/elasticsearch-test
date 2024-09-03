@@ -8,6 +8,8 @@
 
 package org.elasticsearch.ingest.common;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.core.SuppressForbidden;
 import org.elasticsearch.ingest.AbstractProcessor;
 import org.elasticsearch.ingest.ConfigurationUtils;
@@ -94,7 +96,7 @@ public class UriPartsProcessor extends AbstractProcessor {
             uri = new URI(urlString);
         } catch (URISyntaxException e) {
             try {
-                url = new URL(urlString);
+                url = Urls.create(urlString, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             } catch (MalformedURLException e2) {
                 throw new IllegalArgumentException("unable to parse URI [" + urlString + "]");
             }

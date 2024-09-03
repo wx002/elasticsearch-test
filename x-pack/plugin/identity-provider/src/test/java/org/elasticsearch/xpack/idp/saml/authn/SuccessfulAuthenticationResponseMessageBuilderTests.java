@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.idp.saml.authn;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.xpack.idp.saml.idp.SamlIdentityProvider;
 import org.elasticsearch.xpack.idp.saml.sp.SamlServiceProvider;
 import org.elasticsearch.xpack.idp.saml.sp.ServiceProviderDefaults;
@@ -59,7 +61,7 @@ public class SuccessfulAuthenticationResponseMessageBuilderTests extends IdpSaml
         final String baseServiceUrl = "https://" + randomAlphaOfLength(32) + ".us-east-1.aws.found.io/";
         final String acs = baseServiceUrl + "api/security/saml/callback";
         when(sp.getEntityId()).thenReturn(baseServiceUrl);
-        when(sp.getAssertionConsumerService()).thenReturn(new URL(acs));
+        when(sp.getAssertionConsumerService()).thenReturn(Urls.create(acs, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
         when(sp.getAuthnExpiry()).thenReturn(Duration.ofMinutes(10));
         when(sp.getAttributeNames()).thenReturn(new SamlServiceProvider.AttributeNames("principal", null, null, null));
 

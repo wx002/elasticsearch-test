@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.security.enrollment;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.CheckedSupplier;
@@ -88,11 +90,11 @@ public class ExternalEnrollmentTokenGenerator extends BaseEnrollmentTokenGenerat
     }
 
     protected static URL createAPIKeyUrl(URL baseUrl) throws MalformedURLException, URISyntaxException {
-        return new URL(baseUrl, (baseUrl.toURI().getPath() + "/_security/api_key").replaceAll("/+", "/"));
+        return Urls.create(baseUrl, (baseUrl.toURI().getPath() + "/_security/api_key").replaceAll("/+", "/"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
 
     protected static URL getHttpInfoUrl(URL baseUrl) throws MalformedURLException, URISyntaxException {
-        return new URL(baseUrl, (baseUrl.toURI().getPath() + "/_nodes/_local/http").replaceAll("/+", "/"));
+        return Urls.create(baseUrl, (baseUrl.toURI().getPath() + "/_nodes/_local/http").replaceAll("/+", "/"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
 
     @SuppressWarnings("unchecked")

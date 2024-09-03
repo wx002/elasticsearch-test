@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.idp.saml.sp;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.xpack.idp.privileges.ServiceProviderPrivileges;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.security.x509.X509Credential;
@@ -92,7 +94,7 @@ public final class SamlServiceProviderFactory {
     private static URL parseUrl(SamlServiceProviderDocument document) {
         final URL acs;
         try {
-            acs = new URL(document.acs);
+            acs = Urls.create(document.acs, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         } catch (MalformedURLException e) {
             final ServiceProviderException exception = new ServiceProviderException(
                 "Service provider [{}] (doc {}) has an invalid ACS [{}]",
