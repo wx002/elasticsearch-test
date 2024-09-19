@@ -12,6 +12,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
+import io.github.pixee.security.SystemCommand;
 
 import org.apache.lucene.tests.util.LuceneTestCase;
 import org.apache.lucene.util.Constants;
@@ -127,7 +128,7 @@ public class NamedPipeHelperNoBootstrapTests extends LuceneTestCase {
     }
 
     private static void createPipeUnix(String pipeName) throws IOException, InterruptedException {
-        if (Runtime.getRuntime().exec("mkfifo " + pipeName).waitFor() != 0) {
+        if (SystemCommand.runCommand(Runtime.getRuntime(), "mkfifo " + pipeName).waitFor() != 0) {
             throw new IOException("mkfifo failed for pipe " + pipeName);
         }
     }
