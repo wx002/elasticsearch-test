@@ -8,6 +8,7 @@
 
 package org.elasticsearch.plugins.cli;
 
+import io.github.pixee.security.ZipSecurity;
 import org.apache.lucene.search.spell.LevenshteinDistance;
 import org.apache.lucene.util.CollectionUtil;
 import org.apache.lucene.util.Constants;
@@ -776,7 +777,7 @@ public class InstallPluginAction implements Closeable {
         final Path target = stagingDirectory(pluginsDir);
         pathsToDeleteOnShutdown.add(target);
 
-        try (ZipInputStream zipInput = new ZipInputStream(Files.newInputStream(zip))) {
+        try (ZipInputStream zipInput = ZipSecurity.createHardenedInputStream(Files.newInputStream(zip))) {
             ZipEntry entry;
             byte[] buffer = new byte[8192];
             while ((entry = zipInput.getNextEntry()) != null) {

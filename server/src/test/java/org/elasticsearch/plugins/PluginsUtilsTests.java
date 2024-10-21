@@ -8,6 +8,7 @@
 
 package org.elasticsearch.plugins;
 
+import io.github.pixee.security.ZipSecurity;
 import org.apache.logging.log4j.Level;
 import org.apache.lucene.tests.util.LuceneTestCase;
 import org.elasticsearch.Build;
@@ -173,7 +174,7 @@ public class PluginsUtilsTests extends ESTestCase {
                 if (codebase.toString().endsWith(".jar")) {
                     // copy from jar, exactly as is
                     out.putNextEntry(new ZipEntry(relativePath));
-                    try (ZipInputStream in = new ZipInputStream(Files.newInputStream(codebase))) {
+                    try (ZipInputStream in = ZipSecurity.createHardenedInputStream(Files.newInputStream(codebase))) {
                         ZipEntry entry = in.getNextEntry();
                         while (entry != null) {
                             if (entry.getName().equals(relativePath)) {
