@@ -8,6 +8,7 @@
 
 package oldes;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.lucene.util.Constants;
 
 import java.io.BufferedReader;
@@ -104,7 +105,7 @@ public class OldElasticsearch {
         );
         try (BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
-            while ((line = stdout.readLine()) != null && (pid == 0 || port == 0)) {
+            while ((line = BoundedLineReader.readLine(stdout, 5_000_000)) != null && (pid == 0 || port == 0)) {
                 System.out.println(line);
                 Matcher m = pidPattern.matcher(line);
                 if (m.find()) {

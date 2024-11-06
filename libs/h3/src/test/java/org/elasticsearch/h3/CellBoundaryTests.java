@@ -18,6 +18,7 @@
  */
 package org.elasticsearch.h3;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.lucene.geo.GeoEncodingUtils;
 import org.apache.lucene.tests.geo.GeoTestUtil;
 import org.elasticsearch.test.ESTestCase;
@@ -148,22 +149,22 @@ public class CellBoundaryTests extends ESTestCase {
     private void processFile(String file) throws IOException {
         InputStream fis = getClass().getResourceAsStream(file + ".gz");
         BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis), StandardCharsets.UTF_8));
-        String h3Address = reader.readLine();
+        String h3Address = BoundedLineReader.readLine(reader, 5_000_000);
         while (h3Address != null) {
             assertEquals(true, H3.h3IsValid(h3Address));
             long h3 = H3.stringToH3(h3Address);
             assertEquals(true, H3.h3IsValid(h3));
             processOne(h3Address, reader);
-            h3Address = reader.readLine();
+            h3Address = BoundedLineReader.readLine(reader, 5_000_000);
         }
     }
 
     private void processOne(String h3Address, BufferedReader reader) throws IOException {
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         if ("{".equals(line) == false) {
             throw new IllegalArgumentException();
         }
-        line = reader.readLine();
+        line = BoundedLineReader.readLine(reader, 5_000_000);
         List<double[]> points = new ArrayList<>();
         while ("}".equals(line) == false) {
             StringTokenizer tokens = new StringTokenizer(line, " ");
@@ -171,7 +172,7 @@ public class CellBoundaryTests extends ESTestCase {
             double lat = Double.parseDouble(tokens.nextToken());
             double lon = Double.parseDouble(tokens.nextToken());
             points.add(new double[] { lat, lon });
-            line = reader.readLine();
+            line = BoundedLineReader.readLine(reader, 5_000_000);
         }
         CellBoundary boundary = H3.h3ToGeoBoundary(h3Address);
         assert boundary.numPoints() == points.size();

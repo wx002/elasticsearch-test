@@ -7,6 +7,7 @@
  */
 package org.elasticsearch.gradle.internal.test;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.gradle.internal.ElasticsearchTestBasePlugin;
 import org.gradle.api.internal.tasks.testing.logging.FullExceptionFormatter;
 import org.gradle.api.internal.tasks.testing.logging.TestExceptionFormatter;
@@ -99,7 +100,7 @@ public class ErrorReportingTestListener implements TestOutputListener, TestListe
 
                             try (BufferedReader reader = eventWriter.reader()) {
                                 PrintStream out = System.out;
-                                for (String message = reader.readLine(); message != null; message = reader.readLine()) {
+                                for (String message = BoundedLineReader.readLine(reader, 5_000_000); message != null; message = BoundedLineReader.readLine(reader, 5_000_000)) {
                                     if (message.startsWith("  1> ")) {
                                         out = System.out;
                                     } else if (message.startsWith("  2> ")) {

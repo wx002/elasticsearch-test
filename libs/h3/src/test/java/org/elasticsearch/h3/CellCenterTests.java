@@ -18,6 +18,7 @@
  */
 package org.elasticsearch.h3;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.test.ESTestCase;
 
 import java.io.BufferedReader;
@@ -145,7 +146,7 @@ public class CellCenterTests extends ESTestCase {
     private void processFile(String file) throws IOException {
         InputStream fis = getClass().getResourceAsStream(file + ".gz");
         BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis), StandardCharsets.UTF_8));
-        String line = reader.readLine();
+        String line = BoundedLineReader.readLine(reader, 5_000_000);
         while (line != null) {
             StringTokenizer tokenizer = new StringTokenizer(line, " ");
             assertEquals(3, tokenizer.countTokens());
@@ -156,7 +157,7 @@ public class CellCenterTests extends ESTestCase {
             assertH3ToLatLng(h3Address, lat, lon);
             assertGeoToH3(h3Address, lat, lon);
             assertHexRing(h3Address);
-            line = reader.readLine();
+            line = BoundedLineReader.readLine(reader, 5_000_000);
         }
     }
 

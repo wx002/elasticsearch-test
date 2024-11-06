@@ -12,6 +12,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
+import io.github.pixee.security.BoundedLineReader;
 
 import org.apache.lucene.tests.util.LuceneTestCase;
 import org.apache.lucene.util.Constants;
@@ -319,7 +320,7 @@ public class NamedPipeHelperNoBootstrapTests extends LuceneTestCase {
             assertNotNull(is);
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                String line = reader.readLine();
+                String line = BoundedLineReader.readLine(reader, 5_000_000);
                 assertEquals(HELLO_WORLD, line);
             }
         } catch (IOException e) {

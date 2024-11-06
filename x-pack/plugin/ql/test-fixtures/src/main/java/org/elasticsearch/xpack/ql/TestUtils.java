@@ -7,6 +7,7 @@
 
 package org.elasticsearch.xpack.ql;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.http.HttpHost;
 import org.elasticsearch.TransportVersion;
 import org.elasticsearch.Version;
@@ -334,13 +335,13 @@ public final class TestUtils {
     public static String readResource(InputStream input) throws IOException {
         StringBuilder builder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
-            String line = reader.readLine();
+            String line = BoundedLineReader.readLine(reader, 5_000_000);
             while (line != null) {
                 if (line.trim().startsWith("//") == false) {
                     builder.append(line);
                     builder.append('\n');
                 }
-                line = reader.readLine();
+                line = BoundedLineReader.readLine(reader, 5_000_000);
             }
             return builder.toString();
         }
@@ -377,7 +378,7 @@ public final class TestUtils {
 
             StringBuilder sb = new StringBuilder();
 
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 lineNumber++;
                 line = line.trim();
 

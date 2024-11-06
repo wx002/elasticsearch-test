@@ -18,6 +18,7 @@
 
 package org.elasticsearch.plugins.spi;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.lucene.util.IOUtils;
 import org.apache.lucene.util.SuppressForbidden;
 
@@ -114,7 +115,7 @@ public final class SPIClassIterator<S> implements Iterator<Class<? extends S>> {
                 try {
                     final BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
                     String line;
-                    while ((line = reader.readLine()) != null) {
+                    while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                         final int pos = line.indexOf('#');
                         if (pos >= 0) {
                             line = line.substring(0, pos);

@@ -8,6 +8,7 @@
 package org.elasticsearch.xpack.vectortile.feature;
 
 import com.wdtinc.mapbox_vector_tile.VectorTile;
+import io.github.pixee.security.BoundedLineReader;
 
 import org.apache.lucene.tests.geo.GeoTestUtil;
 import org.apache.lucene.util.BitUtil;
@@ -187,7 +188,7 @@ public class FeatureFactoryTests extends ESTestCase {
         // sure the fix in place avoids that error.
         final InputStream is = new GZIPInputStream(getClass().getResourceAsStream("polygon.wkt.gz"));
         final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        final Geometry geometry = WellKnownText.fromWKT(StandardValidator.instance(true), true, reader.readLine());
+        final Geometry geometry = WellKnownText.fromWKT(StandardValidator.instance(true), true, BoundedLineReader.readLine(reader, 5_000_000));
         for (int i = 0; i < 10; i++) {
             final int z = randomIntBetween(0, 4);
             final int x = randomIntBetween(0, (1 << z) - 1);
@@ -287,7 +288,7 @@ public class FeatureFactoryTests extends ESTestCase {
     private void assertParsing(InputStream is) throws IOException, ParseException {
         // make sure we can parse big polygons
         final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        final Geometry geometry = WellKnownText.fromWKT(StandardValidator.instance(true), true, reader.readLine());
+        final Geometry geometry = WellKnownText.fromWKT(StandardValidator.instance(true), true, BoundedLineReader.readLine(reader, 5_000_000));
         final FeatureFactory builder = new FeatureFactory(0, 0, 0, 4096, 5);
         assertThat(builder.getFeatures(geometry), iterableWithSize(1));
     }

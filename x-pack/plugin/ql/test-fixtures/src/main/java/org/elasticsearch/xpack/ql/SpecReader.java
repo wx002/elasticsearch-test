@@ -7,6 +7,7 @@
 
 package org.elasticsearch.xpack.ql;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.common.Strings;
 
 import java.io.BufferedReader;
@@ -55,7 +56,7 @@ public final class SpecReader {
         try (BufferedReader reader = TestUtils.reader(source)) {
             String line;
             int lineNumber = 1;
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 line = line.trim();
                 // ignore comments
                 if (shouldSkipLine(line) == false) {

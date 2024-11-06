@@ -6,6 +6,7 @@
  */
 package org.elasticsearch.xpack.sql.qa.jdbc;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.io.Streams;
 import org.elasticsearch.core.Tuple;
@@ -92,7 +93,7 @@ public final class CsvTestUtils {
             BufferedWriter bufferedWriter = new BufferedWriter(writer)
         ) {
 
-            String header = bufferedReader.readLine();
+            String header = BoundedLineReader.readLine(bufferedReader, 5_000_000);
             Tuple<String, String> headerAndTypes;
 
             String sch = schema;
@@ -113,7 +114,7 @@ public final class CsvTestUtils {
             /* Read the next line. It might be a separator designed to look like the cli.
              * If it is, then throw it out. If it isn't then keep it.
              */
-            String maybeSeparator = bufferedReader.readLine();
+            String maybeSeparator = BoundedLineReader.readLine(bufferedReader, 5_000_000);
             if (maybeSeparator != null && false == maybeSeparator.startsWith("----")) {
                 bufferedWriter.write(maybeSeparator);
                 bufferedWriter.newLine();

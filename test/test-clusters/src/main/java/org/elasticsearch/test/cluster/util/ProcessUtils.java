@@ -8,6 +8,7 @@
 
 package org.elasticsearch.test.cluster.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -161,7 +162,7 @@ public final class ProcessUtils {
         new Thread(() -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                     logAppender.accept(line);
                 }
             } catch (IOException e) {

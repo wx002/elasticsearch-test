@@ -6,6 +6,7 @@
  */
 package org.elasticsearch.xpack.sql.qa.jdbc;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.http.HttpHost;
 import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.client.Request;
@@ -444,14 +445,14 @@ public class DataLoader {
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(readFromJarUrl(dataSet), StandardCharsets.UTF_8))) {
-            String titlesString = reader.readLine();
+            String titlesString = BoundedLineReader.readLine(reader, 5_000_000);
             if (titlesString == null) {
                 throw new IllegalArgumentException("[" + location + "] must contain at least a title row");
             }
             List<String> titles = Arrays.asList(titlesString.split(","));
 
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 consumeLine.accept(titles, Arrays.asList(line.split(",")));
             }
         }
