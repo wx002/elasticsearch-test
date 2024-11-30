@@ -207,7 +207,7 @@ public abstract class LicenseHeadersTask extends DefaultTask {
     private ClaimStatistic generateReport(ReportConfiguration config, File xmlReportFile) {
         try {
             Files.deleteIfExists(reportFile.get().getAsFile().toPath());
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(xmlReportFile));
+            BufferedWriter bufferedWriter = Files.newBufferedWriter(xmlReportFile.toPath());
             return toXmlReportFile(config, bufferedWriter);
         } catch (IOException | RatException exception) {
             throw new GradleException("Cannot generate license header report for " + getPath(), exception);
