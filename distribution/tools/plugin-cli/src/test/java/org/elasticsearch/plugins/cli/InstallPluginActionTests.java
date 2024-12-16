@@ -11,6 +11,8 @@ package org.elasticsearch.plugins.cli;
 import com.carrotsearch.randomizedtesting.annotations.ParametersFactory;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.apache.lucene.tests.util.LuceneTestCase;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
@@ -569,7 +571,7 @@ public class InstallPluginActionTests extends ESTestCase {
     public void testSpaceInUrl() throws Exception {
         InstallablePlugin pluginZip = createPluginZip("fake", pluginDir);
         Path pluginZipWithSpaces = createTempFile("foo bar", ".zip");
-        try (InputStream in = FileSystemUtils.openFileURLStream(new URL(pluginZip.getLocation()))) {
+        try (InputStream in = FileSystemUtils.openFileURLStream(Urls.create(pluginZip.getLocation(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS))) {
             Files.copy(in, pluginZipWithSpaces, StandardCopyOption.REPLACE_EXISTING);
         }
         InstallablePlugin modifiedPlugin = new InstallablePlugin("fake", pluginZipWithSpaces.toUri().toURL().toString());

@@ -8,6 +8,8 @@
 
 package org.elasticsearch.common.blobstore.url;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.http.ConnectionClosedException;
 import org.elasticsearch.common.blobstore.BlobContainer;
 import org.elasticsearch.common.blobstore.BlobPath;
@@ -92,7 +94,7 @@ public class URLBlobContainerRetriesTests extends AbstractBlobContainerRetriesTe
             final URLHttpClientSettings httpClientSettings = URLHttpClientSettings.fromSettings(settings);
             URLBlobStore urlBlobStore = new URLBlobStore(
                 settings,
-                new URL(getEndpointForServer()),
+                Urls.create(getEndpointForServer(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
                 factory.create(httpClientSettings),
                 httpClientSettings
             );

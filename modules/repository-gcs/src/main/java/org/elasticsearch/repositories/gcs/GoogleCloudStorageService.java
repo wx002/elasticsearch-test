@@ -20,6 +20,8 @@ import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.StorageRetryStrategy;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -244,7 +246,7 @@ public class GoogleCloudStorageService {
         if (metaHost == null) {
             metaHost = "metadata.google.internal";
         }
-        URL url = new URL("http://" + metaHost + "/computeMetadata/v1/project/project-id");
+        URL url = Urls.create("http://" + metaHost + "/computeMetadata/v1/project/project-id", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         HttpURLConnection connection = (HttpURLConnection) (proxy != null ? url.openConnection(proxy) : url.openConnection());
         connection.setConnectTimeout(5000);
         connection.setReadTimeout(5000);
