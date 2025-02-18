@@ -7,6 +7,7 @@
  */
 package org.elasticsearch.gradle.testclusters;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
@@ -251,7 +252,7 @@ public abstract class RunTask extends DefaultTestClustersTask {
                 for (BufferedReader bufferedReader : toRead) {
                     if (bufferedReader.ready()) {
                         readData = true;
-                        logger.lifecycle(bufferedReader.readLine());
+                        logger.lifecycle(BoundedLineReader.readLine(bufferedReader, 5_000_000));
                     }
                 }
 

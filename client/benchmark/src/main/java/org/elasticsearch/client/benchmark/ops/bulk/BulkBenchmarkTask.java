@@ -7,6 +7,7 @@
  */
 package org.elasticsearch.client.benchmark.ops.bulk;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
@@ -101,7 +102,7 @@ public class BulkBenchmarkTask implements BenchmarkTask {
                 String line;
                 int bulkIndex = 0;
                 List<String> bulkData = new ArrayList<>(bulkSize);
-                while ((line = reader.readLine()) != null) {
+                while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                     if (bulkIndex == bulkSize) {
                         sendBulk(bulkData);
                         // reset data structures

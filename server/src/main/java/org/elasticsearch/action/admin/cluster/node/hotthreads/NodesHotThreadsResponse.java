@@ -8,6 +8,7 @@
 
 package org.elasticsearch.action.admin.cluster.node.hotthreads;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.action.FailedNodeException;
 import org.elasticsearch.action.support.TransportAction;
 import org.elasticsearch.action.support.nodes.BaseNodesResponse;
@@ -63,7 +64,7 @@ public class NodesHotThreadsResponse extends BaseNodesResponse<NodeHotThreads> {
 
         private void advance() {
             try {
-                nextLine = reader.readLine();
+                nextLine = BoundedLineReader.readLine(reader, 5_000_000);
             } catch (IOException e) {
                 assert false : e; // no actual IO happens here
             }

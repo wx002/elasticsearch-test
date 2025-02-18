@@ -6,6 +6,7 @@
  */
 package org.elasticsearch.xpack.esql;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -190,7 +191,7 @@ public class CsvTestsDataLoader {
         try (BufferedReader reader = TestUtils.reader(resource)) {
             StringBuilder b = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 b.append(line);
             }
             return b.toString();
@@ -213,7 +214,7 @@ public class CsvTestsDataLoader {
             String[] columns = null; // list of column names. If one column name contains dot, it is a subfield and its value will be null
             List<Integer> subFieldsIndices = new ArrayList<>(); // list containing the index of a subfield in "columns" String[]
 
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 line = line.trim();
                 // ignore comments
                 if (line.isEmpty() == false && line.startsWith("//") == false) {

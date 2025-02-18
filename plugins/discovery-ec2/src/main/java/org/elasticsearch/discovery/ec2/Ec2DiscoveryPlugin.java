@@ -10,6 +10,7 @@ package org.elasticsearch.discovery.ec2;
 
 import com.amazonaws.util.EC2MetadataUtils;
 import com.amazonaws.util.json.Jackson;
+import io.github.pixee.security.BoundedLineReader;
 
 import org.elasticsearch.SpecialPermission;
 import org.elasticsearch.common.network.NetworkService;
@@ -158,7 +159,7 @@ public class Ec2DiscoveryPlugin extends Plugin implements DiscoveryPlugin, Reloa
             BufferedReader urlReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
         ) {
 
-            final String metadataResult = urlReader.readLine();
+            final String metadataResult = BoundedLineReader.readLine(urlReader, 5_000_000);
             if ((metadataResult == null) || (metadataResult.length() == 0)) {
                 throw new IllegalStateException("no ec2 metadata returned from " + url);
             } else {

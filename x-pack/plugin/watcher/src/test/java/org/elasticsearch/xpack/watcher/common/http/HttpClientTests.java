@@ -6,6 +6,7 @@
  */
 package org.elasticsearch.xpack.watcher.common.http;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
@@ -535,7 +536,7 @@ public class HttpClientTests extends ESTestCase {
             executor.execute(() -> {
                 try (Socket socket = serverSocket.accept()) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-                    in.readLine();
+                    BoundedLineReader.readLine(in, 5_000_000);
                     socket.getOutputStream().write("This is not an HTTP response".getBytes(StandardCharsets.UTF_8));
                     socket.getOutputStream().flush();
                 } catch (Exception e) {

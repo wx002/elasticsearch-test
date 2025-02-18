@@ -6,6 +6,7 @@
  */
 package org.elasticsearch.test.eql;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.http.HttpHost;
 import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.client.Request;
@@ -140,7 +141,7 @@ public class DataLoader {
         try (BufferedReader reader = TestUtils.reader(resource)) {
             StringBuilder b = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 if (line.startsWith("#") == false) {
                     for (Entry<String, String[]> entry : replacementPatterns.entrySet()) {
                         line = line.replace(entry.getKey(), randomOf(entry.getValue()));

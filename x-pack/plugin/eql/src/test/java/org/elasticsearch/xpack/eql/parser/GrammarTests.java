@@ -7,6 +7,7 @@
 
 package org.elasticsearch.xpack.eql.parser;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.core.SuppressForbidden;
 import org.elasticsearch.core.Tuple;
 import org.elasticsearch.test.ESTestCase;
@@ -70,7 +71,7 @@ public class GrammarTests extends ESTestCase {
             String line;
             int lineNumber = 1;
 
-            while ((line = reader.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                 // ignore comments
                 if (line.isEmpty() == false && line.startsWith("//") == false) {
                     query.append(line);

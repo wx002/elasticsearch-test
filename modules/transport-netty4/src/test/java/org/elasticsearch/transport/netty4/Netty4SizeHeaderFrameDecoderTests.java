@@ -8,6 +8,7 @@
 
 package org.elasticsearch.transport.netty4;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.TransportVersion;
 import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
 import org.elasticsearch.common.network.NetworkService;
@@ -88,7 +89,7 @@ public class Netty4SizeHeaderFrameDecoderTests extends ESTestCase {
             socket.getOutputStream().flush();
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
-                assertThat(reader.readLine(), is("This is not an HTTP port"));
+                assertThat(BoundedLineReader.readLine(reader, 5_000_000), is("This is not an HTTP port"));
             }
         }
     }
