@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.security.cli;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
@@ -304,7 +306,7 @@ public class AutoConfigureNode extends EnvironmentAwareCommand {
             URL enrollNodeUrl = null;
             for (String address : enrollmentToken.getBoundAddress()) {
                 try {
-                    enrollNodeUrl = createURL(new URL("https://" + address), "/_security/enroll/node", "");
+                    enrollNodeUrl = createURL(Urls.create("https://" + address, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), "/_security/enroll/node", "");
                     enrollResponse = client.execute(
                         "GET",
                         enrollNodeUrl,

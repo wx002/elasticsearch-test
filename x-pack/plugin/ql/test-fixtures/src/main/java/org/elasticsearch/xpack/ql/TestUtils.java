@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.ql;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.http.HttpHost;
 import org.elasticsearch.TransportVersion;
 import org.elasticsearch.Version;
@@ -245,7 +247,7 @@ public final class TestUtils {
                         String name = entry.getName();
                         Tuple<String, String> entrySplit = pathAndName(name);
                         if (root.equals(entrySplit.v1()) && Regex.simpleMatch(filePattern, entrySplit.v2())) {
-                            matches.add(new URL("jar:" + path.toUri() + "!/" + name));
+                            matches.add(Urls.create("jar:" + path.toUri() + "!/" + name, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
                         }
                     }
                 }

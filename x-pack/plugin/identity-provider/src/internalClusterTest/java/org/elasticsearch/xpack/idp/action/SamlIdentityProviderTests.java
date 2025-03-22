@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.idp.action;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
@@ -171,7 +173,7 @@ public class SamlIdentityProviderTests extends IdentityProviderIntegTestCase {
         final boolean forceAuthn = true;
         final AuthnRequest authnRequest = buildAuthnRequest(
             entityId,
-            new URL(acsUrl),
+            Urls.create(acsUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
             new URL("https://idp.org/sso/redirect"),
             nameIdFormat,
             forceAuthn
@@ -240,7 +242,7 @@ public class SamlIdentityProviderTests extends IdentityProviderIntegTestCase {
         final boolean forceAuthn = true;
         final AuthnRequest authnRequest = buildAuthnRequest(
             entityId,
-            new URL(acsUrl),
+            Urls.create(acsUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
             new URL("https://idp.org/sso/redirect"),
             nameIdFormat,
             forceAuthn
@@ -307,7 +309,7 @@ public class SamlIdentityProviderTests extends IdentityProviderIntegTestCase {
         final boolean forceAuthn = randomBoolean();
         final AuthnRequest authnRequest = buildAuthnRequest(
             entityId + randomAlphaOfLength(4),
-            new URL(acsUrl),
+            Urls.create(acsUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
             new URL("https://idp.org/sso/redirect"),
             nameIdFormat,
             forceAuthn
@@ -332,7 +334,7 @@ public class SamlIdentityProviderTests extends IdentityProviderIntegTestCase {
         final boolean forceAuthn = randomBoolean();
         final AuthnRequest authnRequest = buildAuthnRequest(
             entityId + randomAlphaOfLength(4),
-            new URL(acsUrl),
+            Urls.create(acsUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
             new URL("https://idp.org/sso/redirect"),
             nameIdFormat,
             forceAuthn

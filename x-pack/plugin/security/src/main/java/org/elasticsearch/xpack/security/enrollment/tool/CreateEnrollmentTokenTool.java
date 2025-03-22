@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.security.enrollment.tool;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
@@ -74,8 +76,8 @@ class CreateEnrollmentTokenTool extends BaseRunAsSuperuserCommand {
         throws Exception {
         final String tokenScope = scope.value(options);
         final URL baseUrl = options.has(urlOption)
-            ? new URL(options.valueOf(urlOption))
-            : new URL(clientFunction.apply(env).getDefaultURL());
+            ? Urls.create(options.valueOf(urlOption), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
+            : Urls.create(clientFunction.apply(env).getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         try {
             ExternalEnrollmentTokenGenerator externalEnrollmentTokenGenerator = createEnrollmentTokenFunction.apply(env);
             if (tokenScope.equals("node")) {

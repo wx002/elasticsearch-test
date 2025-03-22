@@ -10,6 +10,8 @@ package org.elasticsearch.common.blobstore.url;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.elasticsearch.common.blobstore.BlobContainer;
 import org.elasticsearch.common.blobstore.BlobPath;
@@ -108,7 +110,7 @@ public class HttpURLBlobStoreTests extends AbstractURLBlobStoreTests {
     @Before
     public void storeSetup() throws MalformedURLException {
         final URLHttpClientSettings httpClientSettings = URLHttpClientSettings.fromSettings(Settings.EMPTY);
-        urlBlobStore = new URLBlobStore(Settings.EMPTY, new URL(getEndpointForServer()), httpClient, httpClientSettings);
+        urlBlobStore = new URLBlobStore(Settings.EMPTY, Urls.create(getEndpointForServer(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), httpClient, httpClientSettings);
     }
 
     @Override

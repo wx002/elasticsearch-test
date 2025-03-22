@@ -6,6 +6,8 @@
  */
 package org.elasticsearch.xpack.sql.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.test.ESTestCase;
 import org.elasticsearch.xpack.sql.proto.SqlVersion;
 
@@ -73,7 +75,7 @@ public class VersionTests extends ESTestCase {
         byte[] parts = randomVersion();
         Path jarPath = createDriverJar(parts);
 
-        URL fileUrl = new URL(jarPath.toUri().toURL().toString());
+        URL fileUrl = Urls.create(jarPath.toUri().toURL().toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         SqlVersion version = ClientVersion.extractVersion(fileUrl);
 
         assertEquals(parts[0], version.major);
@@ -86,7 +88,7 @@ public class VersionTests extends ESTestCase {
         byte[] parts = randomVersion();
         Path jarPath = createDriverJar(parts);
 
-        URL jarUrl = new URL("jar:" + jarPath.toUri().toURL().toString() + JAR_PATH_SEPARATOR);
+        URL jarUrl = Urls.create("jar:" + jarPath.toUri().toURL().toString() + JAR_PATH_SEPARATOR, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         SqlVersion version = ClientVersion.extractVersion(jarUrl);
 
         assertEquals(parts[0], version.major);
@@ -119,9 +121,7 @@ public class VersionTests extends ESTestCase {
             }
         }
 
-        URL jarInJar = new URL(
-            "jar:" + jarPath.toUri().toURL().toString() + JAR_PATH_SEPARATOR + innerJarPath.getFileName() + JAR_PATH_SEPARATOR
-        );
+        URL jarInJar = Urls.create("jar:" + jarPath.toUri().toURL().toString() + JAR_PATH_SEPARATOR + innerJarPath.getFileName() + JAR_PATH_SEPARATOR, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
         SqlVersion version = ClientVersion.extractVersion(jarInJar);
         assertEquals(parts[0], version.major);
