@@ -8,6 +8,7 @@
 
 package org.elasticsearch.gradle.reaper;
 
+import io.github.pixee.security.SystemCommand;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -68,7 +69,7 @@ public class Reaper implements Closeable {
                 String line = Files.readString(inputFile);
                 System.out.println("Running command: " + line);
                 String[] command = line.split(" ");
-                Process process = Runtime.getRuntime().exec(command);
+                Process process = SystemCommand.runCommand(Runtime.getRuntime(), command);
                 int ret = process.waitFor();
 
                 System.out.print("Stdout: ");
