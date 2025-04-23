@@ -21,6 +21,7 @@
 
 package org.elasticsearch.tdigest;
 
+import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -29,7 +30,7 @@ import java.util.Random;
 import static org.elasticsearch.tdigest.IntAVLTree.NIL;
 
 public class AVLTreeDigest extends AbstractTDigest {
-    final Random gen = new Random();
+    final Random gen = new SecureRandom();
     private final double compression;
     private AVLGroupTree summary;
 

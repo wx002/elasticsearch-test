@@ -8,6 +8,7 @@
 
 package org.elasticsearch.gradle.internal.util.ports;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ReservedPortRange {
     public ReservedPortRange(int startPort, int endPort) {
         this.startPort = startPort;
         this.endPort = endPort;
-        current = startPort + new Random().nextInt(endPort - startPort);
+        current = startPort + new SecureRandom().nextInt(endPort - startPort);
     }
 
     public List<Integer> getAllocated() {
