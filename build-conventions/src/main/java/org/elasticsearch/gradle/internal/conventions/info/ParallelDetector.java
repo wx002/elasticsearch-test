@@ -8,6 +8,7 @@
 
 package org.elasticsearch.gradle.internal.conventions.info;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.gradle.api.Action;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
@@ -45,7 +46,7 @@ public class ParallelDetector {
                 String currentID = "";
 
                 try (BufferedReader reader = new BufferedReader(new FileReader(cpuInfoFile))) {
-                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                    for (String line = BoundedLineReader.readLine(reader, 5_000_000); line != null; line = BoundedLineReader.readLine(reader, 5_000_000)) {
                         if (line.contains(":")) {
                             List<String> parts = Arrays.stream(line.split(":", 2)).map(String::trim).collect(Collectors.toList());
                             String name = parts.get(0);

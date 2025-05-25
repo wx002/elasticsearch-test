@@ -7,6 +7,7 @@
 
 package org.elasticsearch.xpack.spatial.index.fielddata;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.lucene.geo.Circle;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.common.geo.GeometryNormalizer;
@@ -205,7 +206,7 @@ public class GeometryDocValueTests extends ESTestCase {
     private Geometry loadResourceAsGeometry(String filename) throws IOException, ParseException {
         GZIPInputStream is = new GZIPInputStream(getClass().getResourceAsStream(filename));
         final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        final Geometry geometry = WellKnownText.fromWKT(StandardValidator.instance(true), true, reader.readLine());
+        final Geometry geometry = WellKnownText.fromWKT(StandardValidator.instance(true), true, BoundedLineReader.readLine(reader, 5_000_000));
         return geometry;
     }
 

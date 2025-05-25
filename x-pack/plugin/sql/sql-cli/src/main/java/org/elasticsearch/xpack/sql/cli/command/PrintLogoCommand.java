@@ -6,6 +6,7 @@
  */
 package org.elasticsearch.xpack.sql.cli.command;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.elasticsearch.xpack.sql.cli.Cli;
 import org.elasticsearch.xpack.sql.cli.CliTerminal;
 import org.elasticsearch.xpack.sql.cli.FatalCliException;
@@ -44,7 +45,7 @@ public class PrintLogoCommand extends AbstractCliCommand {
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
                     lineLength = Math.max(lineLength, line.length());
                     terminal.println(line);
                 }

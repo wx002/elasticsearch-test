@@ -7,6 +7,7 @@
  */
 package org.elasticsearch.gradle.internal.info;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.gradle.internal.BwcVersions;
 import org.elasticsearch.gradle.internal.conventions.info.GitInfo;
@@ -362,7 +363,7 @@ public class GlobalBuildInfoPlugin implements Plugin<Project> {
             BufferedReader reader = new BufferedReader(new InputStreamReader(GlobalBuildInfoPlugin.class.getResourceAsStream(resourcePath)))
         ) {
             StringBuilder b = new StringBuilder();
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+            for (String line = BoundedLineReader.readLine(reader, 5_000_000); line != null; line = BoundedLineReader.readLine(reader, 5_000_000)) {
                 if (b.length() != 0) {
                     b.append('\n');
                 }

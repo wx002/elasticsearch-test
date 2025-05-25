@@ -8,6 +8,7 @@
 
 package org.elasticsearch.plugins.cli;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.lucene.tests.util.LuceneTestCase;
 import org.elasticsearch.Version;
 import org.elasticsearch.cli.ExitCodes;
@@ -230,10 +231,10 @@ public class RemovePluginActionTests extends ESTestCase {
             BufferedReader reader = new BufferedReader(new StringReader(terminal.getOutput()));
             BufferedReader errorReader = new BufferedReader(new StringReader(terminal.getErrorOutput()))
         ) {
-            assertThat(errorReader.readLine(), equalTo(""));
-            assertThat(errorReader.readLine(), containsString("plugin [fake] not found"));
-            assertThat(reader.readLine(), nullValue());
-            assertThat(errorReader.readLine(), nullValue());
+            assertThat(BoundedLineReader.readLine(errorReader, 5_000_000), equalTo(""));
+            assertThat(BoundedLineReader.readLine(errorReader, 5_000_000), containsString("plugin [fake] not found"));
+            assertThat(BoundedLineReader.readLine(reader, 5_000_000), nullValue());
+            assertThat(BoundedLineReader.readLine(errorReader, 5_000_000), nullValue());
         }
     }
 

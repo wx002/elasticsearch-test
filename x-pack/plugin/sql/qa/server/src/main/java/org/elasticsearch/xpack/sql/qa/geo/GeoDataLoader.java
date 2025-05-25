@@ -7,6 +7,7 @@
 
 package org.elasticsearch.xpack.sql.qa.geo;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
@@ -149,13 +150,13 @@ public class GeoDataLoader {
         }
         StringBuilder builder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(readFromJarUrl(dataSet), StandardCharsets.UTF_8))) {
-            String line = reader.readLine();
+            String line = BoundedLineReader.readLine(reader, 5_000_000);
             while (line != null) {
                 if (line.trim().startsWith("//") == false) {
                     builder.append(line);
                     builder.append('\n');
                 }
-                line = reader.readLine();
+                line = BoundedLineReader.readLine(reader, 5_000_000);
             }
             return builder.toString();
         }
