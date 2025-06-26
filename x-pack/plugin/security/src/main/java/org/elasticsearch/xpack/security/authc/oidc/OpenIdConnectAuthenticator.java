@@ -6,6 +6,8 @@
  */
 package org.elasticsearch.xpack.security.authc.oidc;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import net.minidev.json.JSONArray;
 
 import com.nimbusds.jose.JOSEException;
@@ -788,7 +790,7 @@ public class OpenIdConnectAuthenticator {
                 } else if (jwkSetPath.startsWith("https://")) {
                     final JWSVerificationKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
                         requestedAlgorithm,
-                        new ReloadableJWKSource<>(new URL(jwkSetPath))
+                        new ReloadableJWKSource<>(Urls.create(jwkSetPath, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS))
                     );
                     idTokenValidator = new IDTokenValidator(opConfig.getIssuer(), rpConfig.getClientId(), keySelector, null);
                 } else {

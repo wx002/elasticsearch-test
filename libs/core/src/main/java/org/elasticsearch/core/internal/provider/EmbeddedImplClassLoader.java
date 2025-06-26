@@ -8,6 +8,8 @@
 
 package org.elasticsearch.core.internal.provider;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -466,7 +468,7 @@ public final class EmbeddedImplClassLoader extends SecureClassLoader {
     }
 
     private static CodeSource codeSource(URL baseURL, String jarName) throws MalformedURLException {
-        return new CodeSource(new URL(baseURL, jarName), (CodeSigner[]) null /*signers*/);
+        return new CodeSource(Urls.create(baseURL, jarName, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), (CodeSigner[]) null /*signers*/);
     }
 
     private static boolean isMultiRelease(ClassLoader parent, String jarPrefix) throws IOException {

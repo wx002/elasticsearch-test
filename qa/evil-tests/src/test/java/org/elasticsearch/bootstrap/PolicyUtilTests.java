@@ -8,6 +8,8 @@
 
 package org.elasticsearch.bootstrap;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.core.SuppressForbidden;
 import org.elasticsearch.plugins.PluginDescriptor;
 import org.elasticsearch.test.ESTestCase;
@@ -44,7 +46,7 @@ public class PolicyUtilTests extends ESTestCase {
 
     URL makeUrl(String s) {
         try {
-            return new URL(s);
+            return Urls.create(s, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

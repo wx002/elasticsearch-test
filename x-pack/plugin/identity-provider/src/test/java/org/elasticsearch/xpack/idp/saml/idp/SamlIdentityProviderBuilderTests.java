@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.idp.saml.idp;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.lucene.tests.util.LuceneTestCase;
 import org.elasticsearch.common.ValidationException;
 import org.elasticsearch.common.settings.MockSecureSettings;
@@ -599,13 +601,11 @@ public class SamlIdentityProviderBuilderTests extends IdpSamlTestCase {
 
     public void testCreateViaMethodCalls() throws Exception {
         final String entityId = randomAlphaOfLength(4) + ":" + randomAlphaOfLength(6) + "/" + randomAlphaOfLengthBetween(4, 12);
-        final URL redirectUrl = new URL(
-            randomFrom("http", "https")
+        final URL redirectUrl = Urls.create(randomFrom("http", "https")
                 + "://"
                 + String.join(".", randomArray(2, 5, String[]::new, () -> randomAlphaOfLengthBetween(3, 6)))
                 + "/"
-                + String.join("/", randomArray(1, 3, String[]::new, () -> randomAlphaOfLengthBetween(2, 4)))
-        );
+                + String.join("/", randomArray(1, 3, String[]::new, () -> randomAlphaOfLengthBetween(2, 4))), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
         final X509Credential credential = readCredentials("RSA", randomFrom(1024, 2048));
         final String nameIdFormat = randomFrom(NameID.TRANSIENT, PERSISTENT, EMAIL);

@@ -6,6 +6,8 @@
  */
 package org.elasticsearch.xpack.security.authc.esnative.tool;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.common.settings.MockSecureSettings;
 import org.elasticsearch.common.settings.SecureString;
 import org.elasticsearch.common.settings.Settings;
@@ -68,7 +70,7 @@ public class CommandLineHttpClientTests extends ESTestCase {
         CommandLineHttpClient client = new CommandLineHttpClient(TestEnvironment.newEnvironment(settings));
         HttpResponse httpResponse = client.execute(
             "GET",
-            new URL("https://localhost:" + webServer.getPort() + "/test"),
+            Urls.create("https://localhost:" + webServer.getPort() + "/test", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
             "u1",
             new SecureString(new char[] { 'p' }),
             () -> null,
@@ -88,7 +90,7 @@ public class CommandLineHttpClientTests extends ESTestCase {
         );
         HttpResponse httpResponse = client.execute(
             "GET",
-            new URL("https://localhost:" + webServer.getPort() + "/test"),
+            Urls.create("https://localhost:" + webServer.getPort() + "/test", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
             "u1",
             new SecureString(new char[] { 'p' }),
             () -> null,

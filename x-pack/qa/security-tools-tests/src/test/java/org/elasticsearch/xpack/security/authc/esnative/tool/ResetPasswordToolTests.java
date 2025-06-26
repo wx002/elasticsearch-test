@@ -7,6 +7,8 @@
 
 package org.elasticsearch.xpack.security.authc.esnative.tool;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import joptsimple.OptionSet;
 
 import com.google.common.jimfs.Configuration;
@@ -100,7 +102,7 @@ public class ResetPasswordToolTests extends CommandTestCase {
         this.client = mock(CommandLineHttpClient.class);
         when(client.getDefaultURL()).thenReturn("https://localhost:9200");
         user = randomFrom("elastic", "kibana_system", "nativeuser1");
-        URL url = new URL(client.getDefaultURL());
+        URL url = Urls.create(client.getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         HttpResponse healthResponse = new HttpResponse(HttpURLConnection.HTTP_OK, Map.of("status", randomFrom("yellow", "green")));
         when(
             client.execute(
@@ -216,7 +218,7 @@ public class ResetPasswordToolTests extends CommandTestCase {
     }
 
     public void testFailureClusterUnhealthy() throws Exception {
-        final URL url = new URL(client.getDefaultURL());
+        final URL url = Urls.create(client.getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         HttpResponse healthResponse = new HttpResponse(HttpURLConnection.HTTP_OK, Map.of("status", randomFrom("red")));
         when(
             client.execute(
@@ -239,7 +241,7 @@ public class ResetPasswordToolTests extends CommandTestCase {
 
     public void testFailureUnableToChangePassword() throws Exception {
         terminal.addTextInput("y");
-        final URL url = new URL(client.getDefaultURL());
+        final URL url = Urls.create(client.getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         HttpResponse changePasswordResponse = new HttpResponse(HttpURLConnection.HTTP_UNAVAILABLE, Map.of());
         when(
             client.execute(
@@ -261,7 +263,7 @@ public class ResetPasswordToolTests extends CommandTestCase {
 
     public void testFailureClusterUnhealthyWithForce() throws Exception {
         terminal.addTextInput("y");
-        final URL url = new URL(client.getDefaultURL());
+        final URL url = Urls.create(client.getDefaultURL(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         HttpResponse healthResponse = new HttpResponse(HttpURLConnection.HTTP_OK, Map.of("status", randomFrom("red")));
         when(
             client.execute(
@@ -304,10 +306,10 @@ public class ResetPasswordToolTests extends CommandTestCase {
     }
 
     private URL changePasswordUrl(URL url, String user) throws MalformedURLException, URISyntaxException {
-        return new URL(url, (url.toURI().getPath() + "/_security/user/" + user + "/_password").replaceAll("/+", "/") + "?pretty");
+        return Urls.create(url, (url.toURI().getPath() + "/_security/user/" + user + "/_password").replaceAll("/+", "/") + "?pretty", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
 
     private URL clusterHealthUrl(URL url) throws MalformedURLException, URISyntaxException {
-        return new URL(url, (url.toURI().getPath() + "/_cluster/health").replaceAll("/+", "/") + "?pretty");
+        return Urls.create(url, (url.toURI().getPath() + "/_cluster/health").replaceAll("/+", "/") + "?pretty", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
     }
 }

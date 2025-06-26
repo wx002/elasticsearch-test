@@ -8,6 +8,8 @@
 
 package org.elasticsearch.ingest.geoip;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.ResourceNotFoundException;
 import org.elasticsearch.SpecialPermission;
@@ -53,8 +55,8 @@ class HttpClient {
                             throw new IllegalStateException("too many redirects connection to [" + urlToGet + "]");
                         }
                         String location = conn.getHeaderField("Location");
-                        URL base = new URL(url);
-                        URL next = new URL(base, location);  // Deal with relative URLs
+                        URL base = Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+                        URL next = Urls.create(base, location, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);  // Deal with relative URLs
                         url = next.toExternalForm();
                         conn = createConnection(url);
                         break;
@@ -74,7 +76,7 @@ class HttpClient {
     }
 
     private static HttpURLConnection createConnection(String url) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection conn = (HttpURLConnection) Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
         conn.setConnectTimeout(10000);
         conn.setReadTimeout(10000);
         conn.setDoOutput(false);

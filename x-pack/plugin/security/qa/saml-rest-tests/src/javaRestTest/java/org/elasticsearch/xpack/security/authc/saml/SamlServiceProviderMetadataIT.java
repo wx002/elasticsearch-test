@@ -9,6 +9,8 @@ package org.elasticsearch.xpack.security.authc.saml;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpsServer;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.ResponseException;
@@ -217,7 +219,7 @@ public class SamlServiceProviderMetadataIT extends ESRestTestCase {
         var httpsAddress = httpsServer.getAddress();
         var message = new SamlResponseBuilder().spEntityId("https://sp" + realmNumber + ".example.org/")
             .idpEntityId(getIdpEntityId(realmNumber))
-            .acs(new URL("https://" + httpsAddress.getHostName() + ":" + httpsAddress.getPort() + "/acs/" + realmNumber))
+            .acs(Urls.create("https://" + httpsAddress.getHostName() + ":" + httpsAddress.getPort() + "/acs/" + realmNumber, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS))
             .attribute("urn:oid:2.5.4.3", username)
             .sign(getDataPath("/saml/signing.crt"), getDataPath("/saml/signing.key"), new char[0])
             .asString();

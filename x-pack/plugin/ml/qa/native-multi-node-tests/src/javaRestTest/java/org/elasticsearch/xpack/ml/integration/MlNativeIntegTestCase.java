@@ -6,6 +6,8 @@
  */
 package org.elasticsearch.xpack.ml.integration;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.elasticsearch.action.admin.cluster.snapshots.features.ResetFeatureStateAction;
 import org.elasticsearch.action.admin.cluster.snapshots.features.ResetFeatureStateRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshAction;
@@ -227,7 +229,7 @@ abstract class MlNativeIntegTestCase extends ESIntegTestCase {
         final TransportAddress[] transportAddresses = new TransportAddress[stringAddresses.length];
         int i = 0;
         for (String stringAddress : stringAddresses) {
-            URL url = new URL("http://" + stringAddress);
+            URL url = Urls.create("http://" + stringAddress, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             InetAddress inetAddress = InetAddress.getByName(url.getHost());
             transportAddresses[i++] = new TransportAddress(new InetSocketAddress(inetAddress, url.getPort()));
         }
