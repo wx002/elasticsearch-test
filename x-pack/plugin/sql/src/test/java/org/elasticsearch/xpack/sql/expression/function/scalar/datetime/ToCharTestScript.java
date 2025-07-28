@@ -8,6 +8,7 @@
 package org.elasticsearch.xpack.sql.expression.function.scalar.datetime;
 
 import com.carrotsearch.randomizedtesting.generators.RandomNumbers;
+import java.security.SecureRandom;
 
 import org.elasticsearch.common.util.set.Sets;
 import org.elasticsearch.core.PathUtils;
@@ -241,7 +242,7 @@ public class ToCharTestScript {
 
     @SuppressForbidden(reason = "It is ok to use Random outside of an actual test")
     private static Random rnd() {
-        return new Random();
+        return new SecureRandom();
     }
 
     public static void main(String[] args) throws Exception {

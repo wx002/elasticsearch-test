@@ -21,6 +21,7 @@
 
 package org.elasticsearch.tdigest;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -28,7 +29,7 @@ import java.util.Random;
  * Static sorting methods
  */
 public class Sort {
-    private static final Random prng = new Random(); // for choosing pivots during quicksort
+    private static final Random prng = new SecureRandom(); // for choosing pivots during quicksort
 
     /**
      * Single-key stabilized quick sort on using an index array
